@@ -12,16 +12,7 @@ function Square(props) {
   );
 }
 
-
-function calculateWinner(squares, x, y) {
-  // let board = [];
-  // let n = 0;
-  // for (let i = 0; i < boardSize; i++) {
-  //   board[i] = [];
-  //   for (let j = 0; j < boardSize; j++, n++) {
-  //     board[i][j] = squares[n]
-  //   }
-  // }
+function calculateWinner(squares) {
   const winLines = [
     [0, 19, 38, 57, 76],
     [1, 20, 39, 58, 77],
@@ -97,14 +88,14 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    if (calculateWinner(squares, squares.x, squares.y) || squares[i]) {
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.blackIsNext ? '☻' : '○';
     this.setState({
       history: history.concat([{
         squares: squares,
-        x: i % boardSize ,
+        x: i % boardSize,
         y: parseInt(i / boardSize)
       }]),
       stepNumber: history.length,
@@ -122,7 +113,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares, current.x, current.y);
+    const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move + ' (' + step.x + ',' + step.y + ')' :
