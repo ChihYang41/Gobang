@@ -14,6 +14,14 @@ function Square(props) {
 
 
 function calculateWinner(squares, x, y) {
+  // let board = [];
+  // let n = 0;
+  // for (let i = 0; i < boardSize; i++) {
+  //   board[i] = [];
+  //   for (let j = 0; j < boardSize; j++, n++) {
+  //     board[i][j] = squares[n]
+  //   }
+  // }
   const winLines = [
     [0, 19, 38, 57, 76],
     [1, 20, 39, 58, 77],
@@ -81,7 +89,7 @@ class Game extends React.Component {
         y: null,
       }],
       stepNumber: 0,
-      xIsNext: true,
+      blackIsNext: true,
     };
   }
 
@@ -89,33 +97,32 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares, squares.x, squares.y) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? '☻' : '○';
+    squares[i] = this.state.blackIsNext ? '☻' : '○';
     this.setState({
       history: history.concat([{
         squares: squares,
-        x: i % boardSize + 1,
-        y: parseInt(i / boardSize) + 1
+        x: i % boardSize ,
+        y: parseInt(i / boardSize)
       }]),
       stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
+      blackIsNext: !this.state.blackIsNext,
     });
   }
 
   jumpTo(step) {
     this.setState({
       stepNumber: step,
-      xIsNext: (step % 2) ? false : true
+      blackIsNext: (step % 2) ? false : true
     })
   }
 
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
-
+    const winner = calculateWinner(current.squares, current.x, current.y);
     const moves = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move + ' (' + step.x + ',' + step.y + ')' :
@@ -132,7 +139,7 @@ class Game extends React.Component {
     if (winner) {
       status = 'Winner: ' + winner;
     } else {
-      status = 'Next player is： ' + (this.state.xIsNext ? '黑子' : '白子')
+      status = 'Next player is： ' + (this.state.blackIsNext ? '黑子' : '白子')
     }
     return (
       <div className="game">
